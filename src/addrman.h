@@ -427,13 +427,21 @@ public:
     // Add multiple addresses.
     bool Add(const std::vector<CAddress> &vAddr, const CNetAddr& source, int64_t nTimePenalty = 0)
     {
+
+        LogPrint("peering", "Adding addresses from %s : ", source.ToString().c_str());
+
         int nAdd = 0;
         {
             LOCK(cs);
             Check();
-            for (std::vector<CAddress>::const_iterator it = vAddr.begin(); it != vAddr.end(); it++)
+            for (std::vector<CAddress>::const_iterator it = vAddr.begin(); it != vAddr.end(); it++){
                 nAdd += Add_(*it, source, nTimePenalty) ? 1 : 0;
+                LogPrint("peering", "%s,", it->ToString() );
+            }
             Check();
+            LogPrint("peering", "\n" );
+
+
         }
         if (nAdd)
             LogPrint("addrman", "Added %i addresses from %s: %i tried, %i new\n", nAdd, source.ToString().c_str(), nTried, nNew);
